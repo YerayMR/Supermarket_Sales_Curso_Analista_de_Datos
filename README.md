@@ -14,55 +14,40 @@ El dataset contiene información realista de ventas en supermercados, incluyendo
 
 ## ⚠️ Notas Previas sobre el Formato del Dataset
 
-El archivo original del dataset *Supermarket Sales* está en **formato numérico anglosajón**, lo que implica:
+El dataset *Supermarket Sales* utiliza **formato anglosajón**, lo que genera problemas al importarlo en **Excel Web**, que trabaja con configuración europea.
 
-- Uso de **punto (.) como separador decimal**
-- Uso de **coma (,) en la estructura del CSV**
-- Ausencia de separadores de miles
-- Valores numéricos como: `74.69`, `26.1415`, `548.9715`, etc.
+### ❗ Problemas detectados
+1. **Decimales anglosajones**
+   - Los números vienen con **punto (.) como separador decimal**.
+   - Excel Web elimina el punto al convertir la celda a número, provocando errores como:
+     - `26.1415` → `261415` → `261.415` (dato dañado).
+   - Esto impide cálculos fiables y afecta a pivot tables o KPIs.
 
-### ❗ Problema en Excel Web
-Excel Web **no interpreta correctamente** los decimales anglosajones.  
-Al intentar convertir las columnas numéricas, Excel:
+2. **Fechas en formato MM/DD/YYYY**
+   - Excel Web interpreta de forma incorrecta el formato americano.
+   - Algunas fechas se autoconvierten, otras quedan como texto, produciendo mezclas como:
+     - `03/07/2019` interpretado como 3 de julio.
+     - `12/1/2019` interpretado como 12 de enero.
+   - Al convertir estas fechas a texto se pierde la forma original, haciendo imposible reconstruirlas desde Excel Web.
 
-- Elimina el punto decimal original  
-- Convierte `26.1415` en `261415`  
-- Lo reformatea como `261.415`  
-- Daña la precisión y estructura del dato  
-- Hace imposible recuperar el número original  
+### 📌 Limitaciones de Excel Web
+Excel Web no dispone de:
+- Power Query  
+- Control avanzado del tipo de dato antes de la importación  
+- Herramientas para impedir la autocorrección automática de fechas y decimales  
 
-Esto ocurre porque Excel Web fuerza automáticamente el formato numérico europeo al dividir texto en columnas o cambiar el tipo de celda.
+Por tanto, procesar el CSV directamente en Excel Web provoca pérdida irreversible de información.
 
-### ✔️ Solución recomendada antes de importar
-Para evitar la pérdida de datos, es necesario **convertir los decimales antes de que Excel procese el archivo**. Existen tres alternativas seguras:
+### ✔️ Solución adoptada
+Para preservar la integridad del dataset y convertirlo correctamente al formato europeo, se realiza un **preprocesado completo en Google Colab** utilizando `pandas`, donde:
 
-1. **Abrir el CSV en un editor de texto** y reemplazar:
-   - `,` → `;`  
-   - `.` → `,`  
-   Luego guardar como CSV UTF-8.
+- Se interpretan correctamente los decimales anglosajones.
+- Se convierten las fechas a formato estándar europeo.
+- Se exporta un archivo limpio a `.xlsx` o `.csv` listo para trabajar en Excel Web.
 
-2. **Importar el CSV en Google Sheets**, que sí respeta los decimales, y después:
-   - Archivo → Descargar → Microsoft Excel  
-   El archivo resultante mantiene los números correctos.
-
-3. **Abrir el archivo directamente en Excel Escritorio**  
-   (si está disponible), donde Power Query permite importar correctamente el formato anglosajón.
-
-### ✔️ Resultado esperado tras la corrección
-Una vez formateado el CSV de forma adecuada:
-
-- `74.69` → `74,69`
-- `26.1415` → `26,1415`
-- `548.9715` → `548,9715`
-
-Conservando exactamente los valores originales y permitiendo:
-
-- Calcular correctamente las tablas dinámicas  
-- Construir KPIs fiables  
-- Realizar análisis estadístico válido  
+Este preprocesado garantiza que el análisis, las tablas dinámicas y el dashboard funcionen sin errores.
 
 ---
-
 
 ## 🎯 Objetivos del Proyecto
 
