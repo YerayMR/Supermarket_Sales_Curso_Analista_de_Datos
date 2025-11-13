@@ -12,15 +12,6 @@ El dataset contiene información realista de ventas en supermercados, incluyendo
 
 ---
 
-## 📂 Estructura del Proyecto
-
-- **/data** → Contiene el dataset original.  
-- **/excel** → Archivo de Excel con todo el análisis y el dashboard.  
-- **/docs** → Información adicional (capturas, notas, etc.).  
-- **README.md** → Documentación del proyecto.
-
----
-
 ## 🎯 Objetivos del Proyecto
 
 1. Importar, limpiar y preparar datos.  
